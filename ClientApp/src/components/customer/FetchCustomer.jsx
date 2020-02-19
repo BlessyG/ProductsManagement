@@ -46,7 +46,7 @@ export class FetchCustomer extends Component {
         }).then(customers => {
                 this.setState(
                     {
-                        customers: this.state.customers.filter((rec) => {
+                        customers:this.state.customers.filter((rec) => {
                             return (rec.id != id);
                         })
                     });
