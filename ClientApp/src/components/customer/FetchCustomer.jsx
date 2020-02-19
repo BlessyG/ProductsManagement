@@ -38,11 +38,9 @@ export class FetchCustomer extends Component {
     }
     handleConfirm() {
         
-        const id = this.state.custId ;
-        this.setState({ open: false });
-        
+        const id = this.state.custId ;      
         fetch('api/Customers/' + id, {
-            method: 'DeleteCustomer'
+            method: 'Delete'
         }).then(customers => {
                 this.setState(
                     {
@@ -50,7 +48,8 @@ export class FetchCustomer extends Component {
                             return (rec.id != id);
                         })
                     });
-            });
+        });
+        this.setState({ open: false });
     }
     handleCancel() {
         this.setState({ open: false });
@@ -85,7 +84,6 @@ export class FetchCustomer extends Component {
                     <table className="ui striped table" >
                         <thead>
                             <tr>
-                                <th>id</th>
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Actions</th>
@@ -95,7 +93,6 @@ export class FetchCustomer extends Component {
                         <tbody>
                             {customers.map((customerList) =>
                                 <tr key={customerList.id}>
-                                    <td>{customerList.id}</td>
                                     <td>{customerList.name}</td>
                                     <td>{customerList.address}</td>
                                     <td><Button color='yellow' onClick={() => this.updateCustomer(customerList.id)}><Icon name='edit' />Edit</Button></td>
