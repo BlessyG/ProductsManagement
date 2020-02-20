@@ -9,7 +9,7 @@ export class FetchCustomer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { customers: [], loading: true, isAddCustomer: false, open: false, customerName:"", address:"" };
+        this.state = { customers: [], loading: true, isAddCustomer: false, open: false};
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);
@@ -17,6 +17,7 @@ export class FetchCustomer extends Component {
         this.renderCustomersTable = this.renderCustomersTable.bind(this);
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleAddressChange = this.handleAddressChange.bind(this);
         this.renderModal = this.renderModal.bind(this);
         const updatedInfo = {
             custId: 0,
@@ -70,13 +71,13 @@ export class FetchCustomer extends Component {
         this.setState({ open: false });        
     }  
     handleCustomerChanges(){
-
+        console.log("retrieved value"+this.state.name+"Address : "+this.state.address);
     }
-    handleNameChange(event) {
-        console.log(event.target.value);
-
-        //console.log(custName);
-        //this.setState({ name: custName});
+    handleNameChange(event) {     
+        this.setState({ name: event.target.value });
+    }
+    handleAddressChange(event) {
+        this.setState({ address: event.target.value });
     }
 
     renderModal() {
@@ -88,19 +89,19 @@ export class FetchCustomer extends Component {
 
                         Name<br /><br />
                         <div className="ui input fluid">
-                            <input type="text" name="name" value={this.state.customerName} onChange={this.handleNameChange} />
+                            <input type="text" name="name" value={this.state.value} onChange={this.handleNameChange} />
                         </div>
                         <br />    Address<br /><br />
                         <div className="ui input fluid">
-                            <input type="text" name="address" />
+                            <input type="text" name="address" value={this.state.value} onChange={this.handleAddressChange} />
                         </div>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button color="black" onClick={this.handleCancel}>
                             cancel
                             </Button>
-                        <Button color="teal">
-                            create<Icon name='check' />
+                        <Button color="teal" onClick={this.handleCustomerChanges}>
+                            create<Icon name='check'/>
                         </Button>
                     </Modal.Actions>
                 </Modal>
