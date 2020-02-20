@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Button, Icon, Modal, Confirm } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
+
+import 'semantic-ui-css/semantic.css';
 
 
 
@@ -9,7 +10,9 @@ export class FetchCustomer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { customers: [], loading: true, isAddCustomer: false, open: false};
+        this.state = {
+            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: ''
+        };
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);
@@ -18,12 +21,7 @@ export class FetchCustomer extends Component {
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleAddressChange = this.handleAddressChange.bind(this);
-        this.renderModal = this.renderModal.bind(this);
-        const updatedInfo = {
-            custId: 0,
-            name: '',
-            address:''
-        };
+        this.renderModal = this.renderModal.bind(this);        
     }
 
     componentDidMount() {
@@ -37,15 +35,7 @@ export class FetchCustomer extends Component {
 
     updateCustomer(id,editName,address) {
         console.log('inside updateCustomer()' + id + ' name:' + editName + ' address ' + address);
-        //fetch('api/Employee/Details/' + empid)
-
-        //    .then(response => response.json() as Promise<EmployeeData>)
-
-        //    .then(data => {
-
-        //        this.setState({ title: "Edit", loading: false, empData: data });
-
-        //    });  
+        
     }
     show(id)
     {
@@ -71,7 +61,22 @@ export class FetchCustomer extends Component {
         this.setState({ open: false });        
     }  
     handleCustomerChanges(){
-        console.log("retrieved value"+this.state.name+"Address : "+this.state.address);
+        console.log("retrieved value" + this.state.name + "Address : " + this.state.address);
+        const data = { name: this.state.name, address: this.state.address }; 
+        const req = JSON.stringify(data);
+      //  this.setState(this.customers[name] = this.state.name, this.customers[address] = this.state.address);
+        fetch('api/Customers', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: req
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                this.props.history.push("/fetch-customer");
+            })  
+        this.setState({ modalOpen: false }); 
     }
     handleNameChange(event) {     
         this.setState({ name: event.target.value });
@@ -80,10 +85,11 @@ export class FetchCustomer extends Component {
         this.setState({ address: event.target.value });
     }
 
+
     renderModal() {
         return (
             <div>
-                <Modal trigger={<Button color='blue' onClick={() => this.createCustomer}>Create Customer</Button>} >
+                <Modal trigger={<Button color='blue' >Create Customer</Button>}>
                     <Modal.Header>Create Customer</Modal.Header>
                     <Modal.Content>
 
