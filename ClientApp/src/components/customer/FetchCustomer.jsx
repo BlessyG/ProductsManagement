@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react';
-import { Button, Form, Icon, Modal, Confirm } from 'semantic-ui-react';
+import { Button, Icon, Modal, Confirm } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
 
@@ -9,7 +9,7 @@ export class FetchCustomer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { customers: [], loading: true, isAddCustomer: false, open: false, custId: 0, customerName:"", address:"" };
+        this.state = { customers: [], loading: true, isAddCustomer: false, open: false, customerName:"", address:"" };
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);
@@ -18,7 +18,11 @@ export class FetchCustomer extends Component {
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.renderModal = this.renderModal.bind(this);
-        console.log(this.state.customers.id);
+        const updatedInfo = {
+            custId: 0,
+            name: '',
+            address:''
+        };
     }
 
     componentDidMount() {
@@ -30,8 +34,8 @@ export class FetchCustomer extends Component {
         this.setState({ customers: data, loading: false });
     }
 
-    updateCustomer(id) {
-        console.log('inside updateCustomer()' + id);
+    updateCustomer(id,editName,address) {
+        console.log('inside updateCustomer()' + id + ' name:' + editName + ' address ' + address);
         //fetch('api/Employee/Details/' + empid)
 
         //    .then(response => response.json() as Promise<EmployeeData>)
@@ -77,7 +81,6 @@ export class FetchCustomer extends Component {
 
     renderModal() {
         return (
-
             <div>
                 <Modal trigger={<Button color='blue' onClick={() => this.createCustomer}>Create Customer</Button>} >
                     <Modal.Header>Create Customer</Modal.Header>
@@ -108,8 +111,7 @@ export class FetchCustomer extends Component {
 
     renderCustomersTable(customers) {
         return (
-            <div>
-                
+            <div>                
                 <div>
                     <table className="ui striped table" >
                         <thead>
@@ -125,7 +127,7 @@ export class FetchCustomer extends Component {
                                 <tr key={customerList.id}>
                                     <td>{customerList.name}</td>
                                     <td>{customerList.address}</td>
-                                    <td><Button color='yellow' onClick={() => this.updateCustomer(customerList.id)}><Icon name='edit' />Edit</Button></td>
+                                    <td><Button color='yellow' onClick={() => this.updateCustomer(customerList.id, customerList.name, customerList.address)}><Icon name='edit' />Edit</Button></td>
                                     <td><Button color='red' onClick={() => this.show(customerList.id)}><Icon name='trash' />Delete
                                     <Confirm
                                         open={this.state.open}
