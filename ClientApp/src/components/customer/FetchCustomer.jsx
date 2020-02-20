@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Button, Icon, Modal, Confirm } from 'semantic-ui-react';
 
-import 'semantic-ui-css/semantic.css';
+import 'semantic-ui-css/semantic.min.css';
 
 
 
@@ -11,7 +11,7 @@ export class FetchCustomer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: '',modalOpen: false
+            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: '', modalOpen: false, customerId:0
         };
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
@@ -19,7 +19,7 @@ export class FetchCustomer extends Component {
         this.handleCancel = this.handleCancel.bind(this);
         this.renderCustomersTable = this.renderCustomersTable.bind(this);
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
-        this.renderModal = this.renderModal.bind(this);        
+        this.renderModal = this.renderModal.bind(this);  
     }
 
     componentDidMount() {
@@ -31,9 +31,9 @@ export class FetchCustomer extends Component {
         this.setState({ customers: data, loading: false });
     }
 
-    updateCustomer(id,editName,address) {
-        console.log('inside updateCustomer()' + id + ' name:' + editName + ' address ' + address);
-        
+    updateCustomer(id,editName,cAddress) {
+        console.log('inside updateCustomer()' + id + ' name:' + editName + ' address ' + cAddress);
+        this.setState({ name: editName, customerId:id, address:cAddress, modalOpen: true });
     }
     show(id)
     {
@@ -59,18 +59,35 @@ export class FetchCustomer extends Component {
         this.setState({ open: false });        
     }  
     async handleCustomerChanges() {
-        console.log("retrieved value" + this.state.name + "Address : " + this.state.address);
-        const data = { name: this.state.name, address: this.state.address }; 
-        const req = JSON.stringify(data);
-      //  this.setState(this.customers[name] = this.state.name, this.customers[address] = this.state.address);
-        const response = await fetch('api/Customers', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: req
-        });
+        console.log("retrieved value" + this.state.name + "Address : " + this.state.address + "Id : " + this.state.customerId);
+        const editId = this.state.customerId;
+        if (editId > 0) {
+            const data = { name: this.state.name, address: this.state.address };
+            const req = JSON.stringify(data);
+            console.log("request : "+req);
+            const response = await fetch('api/Customers/' + editId, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: req
+            });
+        } else {
+            const data = { name: this.state.name, address: this.state.address };
+            const req = JSON.stringify(data);
+            //  this.setState(this.customers[name] = this.state.name, this.customers[address] = this.state.address);
+            const response = await fetch('api/Customers', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: req
+            });
+        }
+        
+
         const custResponse = await fetch('api/Customers');
         const custData = await custResponse.json();
         this.setState({
@@ -82,11 +99,15 @@ export class FetchCustomer extends Component {
     handleAddressChange = (event) => this.setState({ address: event.target.value })    
     handleOpen = () => this.setState({ modalOpen: true })
     handleClose = () => this.setState({ modalOpen: false })
+    
 
     renderModal() {
         return (
             <div>
-                <Modal trigger={<Button color='blue' onClick={this.handleOpen}>Create Customer</Button>} open={this.state.modalOpen}>
+                <Modal style={{
+                    height: '15rem',
+                    position: 'relative'
+                }} trigger={<Button color='blue' onClick={this.handleOpen}>Create Customer</Button>} open={this.state.modalOpen} centered={true} >
                     <Modal.Header>Create Customer</Modal.Header>
                     <Modal.Content>
 
@@ -131,7 +152,31 @@ export class FetchCustomer extends Component {
                                 <tr key={customerList.id}>
                                     <td>{customerList.name}</td>
                                     <td>{customerList.address}</td>
-                                    <td><Button color='yellow' onClick={() => this.updateCustomer(customerList.id, customerList.name, customerList.address)}><Icon name='edit' />Edit</Button></td>
+                                    <td>
+                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.handleOpen} />Edit</Button>} open={this.state.modalOpen} onOpen={() => this.updateCustomer(customerList.id, customerList.name, customerList.address)}>
+                                        
+                                        <Modal.Header>Edit Customer</Modal.Header>
+                                        <Modal.Content>
+
+                                            Name<br /><br />
+                                            <div className="ui input fluid">
+                                                <input type="text" name="name" value={this.state.name} onChange={this.handleNameChange} />
+                                            </div>
+                                            <br />    Address<br /><br />
+                                            <div className="ui input fluid">
+                                                <input type="text" name="address" value={this.state.address} onChange={this.handleAddressChange} />
+                                            </div>
+                                        </Modal.Content>
+                                        <Modal.Actions>
+                                            <Button color="black" onClick={this.handleClose}>
+                                                cancel
+                            </Button>
+                                            <Button color="teal" onClick={this.handleCustomerChanges}>
+                                                update<Icon name='check' />
+                                            </Button>
+                                        </Modal.Actions>
+                </Modal>
+                                    </td>
                                     <td><Button color='red' onClick={() => this.show(customerList.id)}><Icon name='trash' />Delete
                                     <Confirm
                                         open={this.state.open}
