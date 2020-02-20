@@ -58,24 +58,25 @@ export class FetchCustomer extends Component {
         e.preventDefault();
         this.setState({ open: false });        
     }  
-    handleCustomerChanges(){
+    async handleCustomerChanges() {
         console.log("retrieved value" + this.state.name + "Address : " + this.state.address);
         const data = { name: this.state.name, address: this.state.address }; 
         const req = JSON.stringify(data);
       //  this.setState(this.customers[name] = this.state.name, this.customers[address] = this.state.address);
-        fetch('api/Customers', {
+        const response = await fetch('api/Customers', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: req
-        }).then((response) => response.json())
-            .then((responseJson) => {
-               // console.log(response);
-                this.props.history.push("/fetch-customer");
-            })  
-        this.setState({ modalOpen: false });
+        });
+        const custResponse = await fetch('api/Customers');
+        const custData = await custResponse.json();
+        this.setState({
+            customers: custData, modalOpen: false
+        });
+             
     }
     handleNameChange = (event) => this.setState({ name: event.target.value })    
     handleAddressChange = (event) => this.setState({ address: event.target.value })    
