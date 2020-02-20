@@ -9,13 +9,16 @@ export class FetchCustomer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { customers: [], loading: true, isAddCustomer: false, open: false, custId: 0 };
+        this.state = { customers: [], loading: true, isAddCustomer: false, open: false, custId: 0, customerName:"", address:"" };
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
         this.renderCustomersTable = this.renderCustomersTable.bind(this);
-
+        this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.renderModal = this.renderModal.bind(this);
+        console.log(this.state.customers.id);
     }
 
     componentDidMount() {
@@ -28,18 +31,25 @@ export class FetchCustomer extends Component {
     }
 
     updateCustomer(id) {
-        console.log('inside updateCustomer()'+id);
-        //alert("Test Code");
-        //this.props.history.push("/customer/add-customer/" + id);
+        console.log('inside updateCustomer()' + id);
+        //fetch('api/Employee/Details/' + empid)
+
+        //    .then(response => response.json() as Promise<EmployeeData>)
+
+        //    .then(data => {
+
+        //        this.setState({ title: "Edit", loading: false, empData: data });
+
+        //    });  
     }
     show(id)
     {
-        return this.setState({ open: true, custId:id });
+        this.setState({ open: true, custId: id });
     }
-    handleConfirm() {
+    async handleConfirm() {
         
         const id = this.state.custId ;      
-        fetch('api/Customers/' + id, {
+        await fetch('api/Customers/' + id, {
             method: 'Delete'
         }).then(customers => {
                 this.setState(
@@ -51,35 +61,55 @@ export class FetchCustomer extends Component {
         });
         this.setState({ open: false });
     }
-    handleCancel() {
-        this.setState({ open: false });
+    handleCancel(e) {
+        e.preventDefault();
+        this.setState({ open: false });        
     }  
-   
+    handleCustomerChanges(){
+
+    }
+    handleNameChange(event) {
+        console.log(event.target.value);
+
+        //console.log(custName);
+        //this.setState({ name: custName});
+    }
+
+    renderModal() {
+        return (
+
+            <div>
+                <Modal trigger={<Button color='blue' onClick={() => this.createCustomer}>Create Customer</Button>} >
+                    <Modal.Header>Create Customer</Modal.Header>
+                    <Modal.Content>
+
+                        Name<br /><br />
+                        <div className="ui input fluid">
+                            <input type="text" name="name" value={this.state.customerName} onChange={this.handleNameChange} />
+                        </div>
+                        <br />    Address<br /><br />
+                        <div className="ui input fluid">
+                            <input type="text" name="address" />
+                        </div>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button color="black" onClick={this.handleCancel}>
+                            cancel
+                            </Button>
+                        <Button color="teal">
+                            create<Icon name='check' />
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
+            </div>
+            
+            );
+    }
 
     renderCustomersTable(customers) {
         return (
             <div>
-                <div>
-                    <Modal trigger={<Button color='blue' onClick={() => this.createCustomer}>Create Customer</Button>} >
-                        <Modal.Header>Create Customer</Modal.Header>
-                        <Modal.Content>
-                            <Form>
-                                <Form.Field>
-                                    <label>Name</label>
-                                    <input placeholder="First Name" />
-                                </Form.Field>
-                                <Form.Field>
-                                    <label>Address</label>
-                                    <input placeholder="Last Name" />
-                                </Form.Field>
-                                <Button color="black">cancel</Button>
-                                <Button type="submit" color="teal">
-                                    create
-                            </Button>
-                            </Form>
-                        </Modal.Content>
-                    </Modal>
-                </div>
+                
                 <div>
                     <table className="ui striped table" >
                         <thead>
@@ -114,10 +144,14 @@ export class FetchCustomer extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderCustomersTable(this.state.customers);
+        let modalContents = this.state.loading
+            ? <p><em>Loading...</em></p>
+            : this.renderModal();
 
 
         return (
             <div>
+                {modalContents}
                 {contents}
             </div>
 
