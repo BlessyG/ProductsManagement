@@ -11,7 +11,7 @@ export class FetchCustomer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: ''
+            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: '',modalOpen: false
         };
         this.updateCustomer = this.updateCustomer.bind(this);
         this.show = this.show.bind(this);
@@ -19,8 +19,6 @@ export class FetchCustomer extends Component {
         this.handleCancel = this.handleCancel.bind(this);
         this.renderCustomersTable = this.renderCustomersTable.bind(this);
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleAddressChange = this.handleAddressChange.bind(this);
         this.renderModal = this.renderModal.bind(this);        
     }
 
@@ -74,22 +72,20 @@ export class FetchCustomer extends Component {
             body: req
         }).then((response) => response.json())
             .then((responseJson) => {
+               // console.log(response);
                 this.props.history.push("/fetch-customer");
             })  
-        this.setState({ modalOpen: false }); 
+        this.setState({ modalOpen: false });
     }
-    handleNameChange(event) {     
-        this.setState({ name: event.target.value });
-    }
-    handleAddressChange(event) {
-        this.setState({ address: event.target.value });
-    }
-
+    handleNameChange = (event) => this.setState({ name: event.target.value })    
+    handleAddressChange = (event) => this.setState({ address: event.target.value })    
+    handleOpen = () => this.setState({ modalOpen: true })
+    handleClose = () => this.setState({ modalOpen: false })
 
     renderModal() {
         return (
             <div>
-                <Modal trigger={<Button color='blue' >Create Customer</Button>}>
+                <Modal trigger={<Button color='blue' onClick={this.handleOpen}>Create Customer</Button>} open={this.state.modalOpen}>
                     <Modal.Header>Create Customer</Modal.Header>
                     <Modal.Content>
 
@@ -103,7 +99,7 @@ export class FetchCustomer extends Component {
                         </div>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button color="black" onClick={this.handleCancel}>
+                        <Button color="black" onClick={this.handleClose}>
                             cancel
                             </Button>
                         <Button color="teal" onClick={this.handleCustomerChanges}>
