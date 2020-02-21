@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\components\Stores\" />
     <Folder Include="Pages\Product\" />
     <Folder Include="Pages\Store\" />
     <Folder Include="Pages\Sales\" />

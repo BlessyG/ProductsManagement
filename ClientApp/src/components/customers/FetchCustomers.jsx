@@ -84,7 +84,7 @@ export class FetchCustomers extends Component {
     handleAddressChange = (event) => this.setState({ address: event.target.value })    
     handleOpen = () => this.setState({ modalOpen: true })  
     editHandleOpen = () => this.setState({ editModalOpen: true })
-    handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
+    handleClose = () =>  this.setState({ modalOpen: false, open: false, editModalOpen: false }) 
     show = (id) => this.setState({ open: true, custId: id })
     updateCustomer = (id, editName, cAddress) => this.setState({ name: editName, customerId: id, address: cAddress, editModalOpen: true })
     
@@ -190,7 +190,7 @@ export class FetchCustomers extends Component {
         return (
             <div>
                 {modalContents}
-                <div class="ui horizontal divider"></div>
+                <div className="ui horizontal divider"></div>
                 {contents}
             </div>
 
