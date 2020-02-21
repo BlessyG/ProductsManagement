@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
-import { FetchCustomer } from './components/customer/FetchCustomer';
-import { AddCustomer } from './components/customer/AddCustomer';
-import { ListingTable } from './components/ListingTable';
+import { FetchCustomers } from './components/customers/FetchCustomers';
+import { FetchProducts } from './components/products/FetchProducts';
 
 import './custom.css'
 
@@ -14,10 +13,10 @@ export default class App extends Component {
   render () {
     return (
       <Layout>
-        <Route exact path='/' component={Home} />
-            <Route path='/fetch-customer' component={FetchCustomer} />
-            <Route path='/add-customer' component={AddCustomer} />
-            <Route path='/table-listing' component={ListingTable}/>
+            <Route exact path='/' component={FetchCustomers} />
+            <Route path='/fetch-customers' component={FetchCustomers} />
+            <Route path='/fetch-products' component={FetchProducts} />
+            <Route path='/fetch-products' component={FetchProducts}/>
       </Layout>
     );
   }
