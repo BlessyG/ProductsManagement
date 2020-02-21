@@ -5,54 +5,54 @@ import 'semantic-ui-css/semantic.min.css';
 
 
 
-export class FetchProducts extends Component {
-    static displayName = FetchProducts.name;
+export class FetchStores extends Component {
+    static displayName = FetchStores.name;
 
     constructor(props) {
         super(props);
         this.state = {
-            products: [], loading: true, open: false, name: '', price:0 , modalOpen: false, productId: 0, editModalOpen: false
+            stores: [], loading: true, open: false, name: '', address: '', modalOpen: false, storeId: 0, editModalOpen: false
         };
 
         this.handleConfirm = this.handleConfirm.bind(this);
-        this.renderProductsTable = this.renderProductsTable.bind(this);
-        this.handleProductChanges = this.handleProductChanges.bind(this);
+        this.renderStoresTable = this.renderStoresTable.bind(this);
+        this.handleStoreChanges = this.handleStoreChanges.bind(this);
         this.renderModal = this.renderModal.bind(this);
     }
 
     componentDidMount() {
-        this.populateProductData();
+        this.populateStoreData();
     }
-    async populateProductData() {
-        const response = await fetch('api/Products');
+    async populateStoreData() {
+        const response = await fetch('api/Stores');
         const data = await response.json();
-        this.setState({ products: data, loading: false });
+        this.setState({ stores: data, loading: false });
     }
 
 
 
     async handleConfirm() {
-        const id = this.state.custId;
-        await fetch('api/products/' + id, {
+        const id = this.state.storeId;
+        await fetch('api/Stores/' + id, {
             method: 'Delete'
-        }).then(products => {
+        }).then(stores => {
             this.setState(
                 {
-                    products: this.state.products.filter((rec) => {
+                    stores: this.state.stores.filter((rec) => {
                         return (rec.id != id);
                     })
                 });
         });
         this.setState({ open: false });
     }
-    async handleProductChanges() {
-        console.log("retrieved value" + this.state.name + "Price : " + this.state.price + "Id : " + this.state.productId);
-        const editId = this.state.productId;
+    async handleStoreChanges() {
+        console.log("retrieved value" + this.state.name + "Address : " + this.state.address + "Id : " + this.state.storeId);
+        const editId = this.state.storeId;
         if (editId > 0) {
-            const data = { id: editId, name: this.state.name, price: Number(this.state.price) };
+            const data = { id: editId, name: this.state.name, address: this.state.address };
             const req = JSON.stringify(data);
             console.log("request : " + req);
-            const response = await fetch('api/Products/' + editId, {
+            const response = await fetch('api/Stores/' + editId, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,11 +60,9 @@ export class FetchProducts extends Component {
                 body: req
             });
         } else {
-            
-            const data = { name: this.state.name, price: Number(this.state.price) };
-            console.log(data);
+            const data = { name: this.state.name, address: this.state.address };
             const req = JSON.stringify(data);
-            await fetch('api/Products', {
+            await fetch('api/Stores', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -75,20 +73,20 @@ export class FetchProducts extends Component {
         }
 
 
-        const prodResponse = await fetch('api/Products');
-        const prodData = await prodResponse.json();
+        const storeResponse = await fetch('api/Stores');
+        const storeData = await storeResponse.json();
         this.setState({
-            products: prodData, modalOpen: false, editModalOpen: false,productId:0
+            stores: storeData, modalOpen: false, editModalOpen: false, storeId:0
         });
 
     }
     handleNameChange = (event) => this.setState({ name: event.target.value })
-    handlePriceChange = (event) => this.setState({ price: event.target.value })
+    handleAddressChange = (event) => this.setState({ address: event.target.value })
     handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
     handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
     show = (id) => this.setState({ open: true, custId: id })
-    updateProduct = (id, editName, prodPrice) => this.setState({ name: editName, productId: id, price: prodPrice, editModalOpen: true })
+    updateStore = (id, editName, sAddress) => this.setState({ name: editName, storeId: id, address: sAddress, editModalOpen: true })
 
 
 
@@ -96,24 +94,24 @@ export class FetchProducts extends Component {
     renderModal() {
         return (
             <div>
-                <Modal trigger={<Button color='blue' onClick={this.handleOpen}>Create Product</Button>} open={this.state.modalOpen} centered={true} >
-                    <Modal.Header>Create Product</Modal.Header>
+                <Modal trigger={<Button color='blue' onClick={this.handleOpen}>Create Store</Button>} open={this.state.modalOpen} centered={true} >
+                    <Modal.Header>Create Store</Modal.Header>
                     <Modal.Content>
 
                         Name<br /><br />
                         <div className="ui input fluid">
                             <input type="text" name="name" value={this.state.value} onChange={this.handleNameChange} />
                         </div>
-                        <br />    Price<br /><br />
+                        <br />    Address<br /><br />
                         <div className="ui input fluid">
-                            <input type="text" name="price" value={this.state.value} onChange={this.handlePriceChange} />
+                            <input type="text" name="address" value={this.state.value} onChange={this.handleAddressChange} />
                         </div>
                     </Modal.Content>
                     <Modal.Actions>
                         <Button color="black" onClick={this.handleClose}>
                             cancel
                             </Button>
-                        <Button color="teal" onClick={this.handleProductChanges}>
+                        <Button color="teal" onClick={this.handleStoreChanges}>
                             create<Icon name='check' />
                         </Button>
                     </Modal.Actions>
@@ -123,7 +121,7 @@ export class FetchProducts extends Component {
         );
     }
 
-    renderProductsTable(products) {
+    renderStoresTable(stores) {
         return (
             <div>
                 <div>
@@ -131,45 +129,45 @@ export class FetchProducts extends Component {
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Price</th>
+                                <th>Address</th>
                                 <th>Actions</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map((productList) =>
-                                <tr key={productList.id}>
-                                    <td>{productList.name}</td>
-                                    <td>{productList.price}</td>
+                            {stores.map((storeList) =>
+                                <tr key={storeList.id}>
+                                    <td>{storeList.name}</td>
+                                    <td>{storeList.address}</td>
                                     <td>
-                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateProduct(productList.id, productList.name, productList.price)}>
+                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateStore(storeList.id, storeList.name, storeList.address)}>
 
-                                            <Modal.Header>Edit Product</Modal.Header>
+                                            <Modal.Header>Edit Store</Modal.Header>
                                             <Modal.Content>
 
                                                 Name<br /><br />
                                                 <div className="ui input fluid">
                                                     <input type="text" name="name" value={this.state.name} onChange={this.handleNameChange} />
                                                 </div>
-                                                <br />    Price<br /><br />
+                                                <br />    Address<br /><br />
                                                 <div className="ui input fluid">
-                                                    <input type="text" name="price" value={this.state.price} onChange={this.handlePriceChange} />
+                                                    <input type="text" name="address" value={this.state.address} onChange={this.handleAddressChange} />
                                                 </div>
                                             </Modal.Content>
                                             <Modal.Actions>
                                                 <Button color="black" onClick={this.handleClose}>
                                                     cancel
                             </Button>
-                                                <Button color="teal" onClick={this.handleProductChanges}>
+                                                <Button color="teal" onClick={this.handleStoreChanges}>
                                                     update<Icon name='check' />
                                                 </Button>
                                             </Modal.Actions>
                                         </Modal>
                                     </td>
-                                    <td><Button color='red' onClick={() => this.show(productList.id)}><Icon name='trash' />Delete
+                                    <td><Button color='red' onClick={() => this.show(storeList.id)}><Icon name='trash' />Delete
                                     <Confirm
                                             open={this.state.open}
-                                            header='Delete product'
+                                            header='Delete store'
                                             onCancel={this.handleClose}
                                             onConfirm={this.handleConfirm}
                                         /></Button></td>
@@ -183,7 +181,7 @@ export class FetchProducts extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderProductsTable(this.state.products);
+            : this.renderStoresTable(this.state.stores);
         let modalContents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderModal();

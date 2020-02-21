@@ -17,6 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="React.AspNet" Version="5.1.2" />
   </ItemGroup>
 
@@ -28,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\components\Stores\" />
     <Folder Include="Pages\Product\" />
     <Folder Include="Pages\Store\" />
     <Folder Include="Pages\Sales\" />

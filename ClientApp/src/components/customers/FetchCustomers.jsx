@@ -11,7 +11,7 @@ export class FetchCustomers extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customers: [], loading: true, isAddCustomer: false, open: false, name: '', address: '', modalOpen: false, customerId: 0, editModalOpen: false
+            customers: [], loading: true, open: false, name: '', address: '', modalOpen: false, customerId: 0, editModalOpen: false
         };
         
         this.handleConfirm = this.handleConfirm.bind(this);
@@ -76,7 +76,7 @@ export class FetchCustomers extends Component {
         const custResponse = await fetch('api/Customers');
         const custData = await custResponse.json();
         this.setState({
-            customers: custData, modalOpen: false, editModalOpen:false
+            customers: custData, modalOpen: false, editModalOpen: false, customerId:0
         });
              
     }

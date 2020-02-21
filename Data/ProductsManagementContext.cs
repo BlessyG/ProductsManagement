@@ -17,5 +17,7 @@ namespace ProductsManagement.Data
         public DbSet<ProductsManagement.Models.Customer> Customer { get; set; }
 
         public DbSet<ProductsManagement.Models.Product> Product { get; set; }
+
+        public DbSet<ProductsManagement.Models.Store> Store { get; set; }
     }
 }
