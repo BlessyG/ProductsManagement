@@ -164,13 +164,13 @@ export class FetchCustomers extends Component {
                                         </Modal.Actions>
                 </Modal>
                                     </td>
-                                    <td><Button color='red' onClick={() => this.show(customerList.id)}><Icon name='trash' />Delete
+                                    <td><Button color='red' onClick={() => this.show(customerList.id)}><Icon name='trash' />Delete</Button>
                                     <Confirm
                                         open={this.state.open}
                                         header='Delete customer'
                                         onCancel={this.handleClose}
                                         onConfirm={this.handleConfirm}                                        
-                                        /></Button></td>
+                                        /></td>
                                 </tr>
                             )}
                         </tbody>

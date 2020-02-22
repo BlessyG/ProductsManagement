@@ -12,7 +12,7 @@ export class FetchSales extends Component {
         super(props);
         this.state = {
             sales: [], customerNames: [], productNames: [], storeNames: [],
-            loading: true, open: false, modalOpen: false, editModalOpen: false,
+            loading: true, deleteOpen: false, modalOpen: false, editModalOpen: false,
             enteredDate:'', customerId: 0, productId: 0, storeId: 0, salesId: 0,
             custName:'', prodName:'', storeName:''
         };
@@ -94,7 +94,7 @@ export class FetchSales extends Component {
                     })
                 });
         });
-        this.setState({ open: false });
+        this.setState({ deleteOpen: false });
     }
     async handleSalesChanges() {
         console.log("retrieved value" + this.state.enteredDate + "custId : " + this.state.customerId + " prodId : " + this.state.productId+"salesId: "+this.state.salesId);
@@ -142,8 +142,9 @@ export class FetchSales extends Component {
     handleAddressChange = (event) => this.setState({ address: event.target.value })
     handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
-    handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
-    show = (id) => this.setState({ open: true, salesId: id })
+    handleClose = () => this.setState({ modalOpen: false, deleteOpen: false, editModalOpen: false })
+    
+    show = (id) => this.setState({ deleteOpen: true, salesId: id })
     updateSales = (sDate, customerName, productName, stName) => {
         console.log("inside updateSales" + sDate, customerName, productName, stName);
         this.setState({ enteredDate: sDate, custName: customerName, prodName: productName, storeName: stName, editModalOpen: true });
@@ -290,13 +291,13 @@ export class FetchSales extends Component {
                                             </Modal.Actions>
                                         </Modal>
                                     </td>
-                                    <td><Button color='red' onClick={() => this.show(salesList.id)}><Icon name='trash' />Delete
+                                    <td><Button color='red' onClick={() => this.show(salesList.id)} ><Icon name='trash' />Delete</Button>
                                     <Confirm
-                                            open={this.state.open}
+                                            open={this.state.deleteOpen}
                                             header='Delete sales'
                                             onCancel={this.handleClose}
                                             onConfirm={this.handleConfirm}
-                                        /></Button></td>
+                                        /></td>
                                 </tr>
                             )}
                         </tbody>
