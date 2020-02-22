@@ -85,7 +85,7 @@ export class FetchStores extends Component {
     handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
     handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
-    show = (id) => this.setState({ open: true, custId: id })
+    show = (id) => this.setState({ open: true, storeId: id })
     updateStore = (id, editName, sAddress) => this.setState({ name: editName, storeId: id, address: sAddress, editModalOpen: true })
 
 

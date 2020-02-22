@@ -11,7 +11,10 @@ export class FetchSales extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sales: [], customerNames: [], productNames:[], storeNames:[], loading: true, open: false, enteredDate: '', customerId: '',productId:'', storeId:'', modalOpen: false, salesId: 0, editModalOpen: false
+            sales: [], customerNames: [], productNames: [], storeNames: [],
+            loading: true, open: false, modalOpen: false, editModalOpen: false,
+            enteredDate:'', customerId: 0, productId: 0, storeId: 0, salesId: 0,
+            custName:'', prodName:'', storeName:''
         };
 
         this.handleConfirm = this.handleConfirm.bind(this);
@@ -26,11 +29,12 @@ export class FetchSales extends Component {
         this.populateProductName();
         this.populateStorename();
     }
-    async populateSaleData() {
+    async populateSaleData() {       
         const response = await fetch('api/Sales');
-        const data = await response.json();
+        const data = await response.json();      
+        console.log("Sales response: " + response);
         this.setState({ sales: data, loading: false });
-        console.log("Sales Data : " + this.state.sales);
+        console.log("Sales Data Date: " + this.state.sales);
     }
     async populateCustomerName() {
         await fetch('api/Customers')
@@ -79,6 +83,7 @@ export class FetchSales extends Component {
     }
     async handleConfirm() {
         const id = this.state.salesId;
+        console.log("sales id in delete" +id);
         await fetch('api/Sales/' + id, {
             method: 'Delete'
         }).then(sales => {
@@ -92,7 +97,7 @@ export class FetchSales extends Component {
         this.setState({ open: false });
     }
     async handleSalesChanges() {
-        console.log("retrieved value" + this.state.enteredDate + "custId : " + this.state.customerId + " prodId : " + this.state.productId+"salesId"+this.state.salesId);
+        console.log("retrieved value" + this.state.enteredDate + "custId : " + this.state.customerId + " prodId : " + this.state.productId+"salesId: "+this.state.salesId);
         const editId = this.state.salesId;
         if (editId > 0) {
             const data = { id: editId, date: this.state.enteredDate, address: this.state.address };
@@ -105,8 +110,7 @@ export class FetchSales extends Component {
                 },
                 body: req
             });
-        } else {
-            
+        } else {            
             const data = {
                 DateSold: this.state.enteredDate,
                 ProductId: this.state.productId,
@@ -139,8 +143,11 @@ export class FetchSales extends Component {
     handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
     handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
-    show = (id) => this.setState({ open: true, custId: id })
-    updateSales = (id, editName, sAddress) => this.setState({ enteredDate: editName, salesId: id, address: sAddress, editModalOpen: true })
+    show = (id) => this.setState({ open: true, salesId: id })
+    updateSales = (sDate, customerName, productName, stName) => {
+        console.log("inside updateSales" + sDate, customerName, productName, stName);
+        this.setState({ enteredDate: sDate, custName: customerName, prodName: productName, storeName: stName, editModalOpen: true });
+    }
     handleDateChange = (event) => {
         console.log("Date : "+event.target.value);
         this.setState({ enteredDate: event.target.value });
@@ -166,8 +173,8 @@ export class FetchSales extends Component {
                     <Modal.Content>
 
                         Date Sold<br />   
-                        <div class="ui calendar" >
-                            <div class="ui input"><input type="date" name="enteredDate" value={this.state.value} onChange={this.handleDateChange}/></div>
+                        <div className="ui calendar" >
+                            <div className="ui input"><input type="date" name="enteredDate" value={this.state.value} onChange={this.handleDateChange}/></div>
                         </div>
 
                         Customer<br />  
@@ -229,24 +236,49 @@ export class FetchSales extends Component {
                         <tbody>
                             {sales.map((salesList) =>
                                 <tr key={salesList.id}>
-                                    <td>{salesList.customerId}</td>
-                                    <td>{salesList.productId}</td>
-                                    <td>{salesList.storeId}</td>
+                                    <td>{salesList.customerName}</td>
+                                    <td>{salesList.productName}</td>
+                                    <td>{salesList.storeName}</td>
                                     <td>{salesList.enteredDate}</td>
                                     <td>
-                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateSales(salesList.id, salesList.name, salesList.address)}>
+                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateSales(salesList.datesold, salesList.customerName, salesList.productName, salesList.storeName)}>
 
                                             <Modal.Header>Edit Sales</Modal.Header>
                                             <Modal.Content>
+                                                Date Sold<br />
+                                                <div className="ui calendar" >
+                                                    <div className="ui input"><input type="date" name="enteredDate" value={this.state.enteredDate} onChange={this.handleDateChange} /></div>
+                                                </div>
 
-                                                Name<br /><br />
-                                                <div className="ui input fluid">
-                                                    <input type="text" name="name" value={this.state.name} onChange={this.handleNameChange} />
-                                                </div>
-                                                <br />    Address<br /><br />
-                                                <div className="ui input fluid">
-                                                    <input type="text" name="address" value={this.state.address} onChange={this.handleAddressChange} />
-                                                </div>
+                                                Customer<br />
+                                                <Dropdown
+                                                    placeholder=''
+                                                    fluid
+                                                    selection
+                                                    options={this.state.customerNames}
+                                                    onChange={this.handleCustomerChange}
+                                                    value={this.state.custName}
+                                                />
+                                                Product<br />
+                                                <Dropdown
+                                                    placeholder=''
+                                                    fluid
+                                                    selection
+                                                    options={this.state.productNames}
+                                                    onChange={this.handleProductChange}
+                                                    value={this.state.prodName}
+                                                />
+                                                Store<br />
+                                                <Dropdown
+                                                    placeholder=''
+                                                    fluid
+                                                    selection
+                                                    options={this.state.storeNames}
+                                                    onChange={this.handleStoreChange}
+                                                    value={this.state.storeName}
+                                                />
+
+                                                <br />   
                                             </Modal.Content>
                                             <Modal.Actions>
                                                 <Button color="black" onClick={this.handleClose}>

@@ -23,9 +23,26 @@ namespace ProductsManagement.Controllers
 
         // GET: api/Sales
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sales>>> GetSales()
+        public async Task<ActionResult<ICollection<SalesDTO>>> GetSales()
         {
-            return await _context.Sales.ToListAsync();
+            var sales = await _context.Sales
+                 .Include(s => s.Customer)
+                 .Include(s => s.Product)
+                 .Include(s => s.Store).Select(s =>
+                   new SalesDTO()
+                   {
+                       Id = s.Id,
+                       CustomerId = s.CustomerId,
+                       ProductId = s.ProductId,
+                       StoreId = s.StoreId,
+                       DateSold = s.DateSold.ToString("MM/dd/yyyy"),
+                       CustomerName = s.Customer.Name,
+                       ProductName = s.Product.Name,
+                       StoreName = s.Store.Name
+                   }).ToListAsync();
+
+            return sales;
+            // return await _context.Sales.ToListAsync();
         }
 
         // GET: api/Sales/5

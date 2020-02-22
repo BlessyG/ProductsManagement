@@ -32,7 +32,7 @@ export class FetchProducts extends Component {
 
 
     async handleConfirm() {
-        const id = this.state.custId;
+        const id = this.state.productId;
         await fetch('api/products/' + id, {
             method: 'Delete'
         }).then(products => {
@@ -87,7 +87,7 @@ export class FetchProducts extends Component {
     handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
     handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
-    show = (id) => this.setState({ open: true, custId: id })
+    show = (id) => this.setState({ open: true, productId: id })
     updateProduct = (id, editName, prodPrice) => this.setState({ name: editName, productId: id, price: prodPrice, editModalOpen: true })
 
 
