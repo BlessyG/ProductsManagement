@@ -100,7 +100,13 @@ export class FetchSales extends Component {
         console.log("retrieved value" + this.state.enteredDate + "custId : " + this.state.customerId + " prodId : " + this.state.productId+"salesId: "+this.state.salesId);
         const editId = this.state.salesId;
         if (editId > 0) {
-            const data = { id: editId, date: this.state.enteredDate, address: this.state.address };
+            const data = {
+                id: editId,
+                DateSold: this.state.enteredDate,
+                ProductId: this.state.productId,
+                CustomerId: this.state.customerId,
+                StoreId: this.state.storeId
+            };
             const req = JSON.stringify(data);
             console.log("request : " + req);
             const response = await fetch('api/Sales/' + editId, {
@@ -130,12 +136,10 @@ export class FetchSales extends Component {
                 console.log(error);
             });
         }
-
-
         const salesResponse = await fetch('api/Sales');
         const salesData = await salesResponse.json();
         this.setState({
-            stores: salesData, modalOpen: false, editModalOpen: false, salesId: 0
+            sales: salesData, modalOpen: false, editModalOpen: false, salesId: 0
         });
 
     }
@@ -145,9 +149,10 @@ export class FetchSales extends Component {
     handleClose = () => this.setState({ modalOpen: false, deleteOpen: false, editModalOpen: false })
     
     show = (id) => this.setState({ deleteOpen: true, salesId: id })
-    updateSales = (sDate, customerName, productName, stName) => {
-        console.log("inside updateSales" + sDate, customerName, productName, stName);
-        this.setState({ enteredDate: sDate, custName: customerName, prodName: productName, storeName: stName, editModalOpen: true });
+    updateSales = (sId, sDate, custId, prodId, stId) => {        
+        const split = sDate.split('/');
+        const modifiedDate = split[2] + "-" + split[0] + "-" + split[1];
+        this.setState({ salesId: sId, enteredDate: modifiedDate, customerId: custId, productId: prodId, storeId: stId, editModalOpen: true });
     }
     handleDateChange = (event) => {
         console.log("Date : "+event.target.value);
@@ -240,9 +245,9 @@ export class FetchSales extends Component {
                                     <td>{salesList.customerName}</td>
                                     <td>{salesList.productName}</td>
                                     <td>{salesList.storeName}</td>
-                                    <td>{salesList.enteredDate}</td>
+                                    <td>{salesList.dateSold}</td>
                                     <td>
-                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateSales(salesList.datesold, salesList.customerName, salesList.productName, salesList.storeName)}>
+                                        <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateSales(salesList.id,salesList.dateSold, salesList.customerId, salesList.productId, salesList.storeId)}>
 
                                             <Modal.Header>Edit Sales</Modal.Header>
                                             <Modal.Content>
@@ -258,7 +263,7 @@ export class FetchSales extends Component {
                                                     selection
                                                     options={this.state.customerNames}
                                                     onChange={this.handleCustomerChange}
-                                                    value={this.state.custName}
+                                                    value={this.state.customerId}
                                                 />
                                                 Product<br />
                                                 <Dropdown
@@ -267,7 +272,7 @@ export class FetchSales extends Component {
                                                     selection
                                                     options={this.state.productNames}
                                                     onChange={this.handleProductChange}
-                                                    value={this.state.prodName}
+                                                    value={this.state.productId}
                                                 />
                                                 Store<br />
                                                 <Dropdown
@@ -276,7 +281,7 @@ export class FetchSales extends Component {
                                                     selection
                                                     options={this.state.storeNames}
                                                     onChange={this.handleStoreChange}
-                                                    value={this.state.storeName}
+                                                    value={this.state.storeId}
                                                 />
 
                                                 <br />   

@@ -27,9 +27,7 @@ export class FetchCustomers extends Component {
         const response = await fetch('api/Customers');
         const data = await response.json();
         this.setState({ customers: data, loading: false });
-    }
-
-    
+    }    
     
     async handleConfirm() {        
         const id = this.state.custId ;      
