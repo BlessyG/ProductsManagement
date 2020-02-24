@@ -24,7 +24,9 @@ export class FetchStores extends Component {
         this.populateStoreData();
     }
     async populateStoreData() {
-        const response = await fetch('api/Stores');
+        const response = await fetch('api/Stores').catch(error => {
+            console.log(error);
+        });
         const data = await response.json();
         this.setState({ stores: data, loading: false });
     }
@@ -42,6 +44,8 @@ export class FetchStores extends Component {
                         return (rec.id != id);
                     })
                 });
+        }).catch(error => {
+            console.log(error);
         });
         this.setState({ open: false });
     }
@@ -58,6 +62,8 @@ export class FetchStores extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: req
+            }).catch(error => {
+                console.log(error);
             });
         } else {
             const data = { name: this.state.name, address: this.state.address };
@@ -69,11 +75,15 @@ export class FetchStores extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: req
+            }).catch(error => {
+                console.log(error);
             });
         }
 
 
-        const storeResponse = await fetch('api/Stores');
+        const storeResponse = await fetch('api/Stores').catch(error => {
+            console.log(error);
+        });
         const storeData = await storeResponse.json();
         this.setState({
             stores: storeData, modalOpen: false, editModalOpen: false, storeId:0

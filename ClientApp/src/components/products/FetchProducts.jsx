@@ -24,7 +24,9 @@ export class FetchProducts extends Component {
         this.populateProductData();
     }
     async populateProductData() {
-        const response = await fetch('api/Products');
+        const response = await fetch('api/Products').catch(error => {
+            console.log(error);
+        });
         const data = await response.json();
         this.setState({ products: data, loading: false });
     }
@@ -42,6 +44,8 @@ export class FetchProducts extends Component {
                         return (rec.id != id);
                     })
                 });
+        }).catch(error => {
+            console.log(error);
         });
         this.setState({ open: false });
     }
@@ -58,6 +62,8 @@ export class FetchProducts extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: req
+            }).catch(error => {
+                console.log(error);
             });
         } else {
             
@@ -71,11 +77,15 @@ export class FetchProducts extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: req
+            }).catch(error => {
+                console.log(error);
             });
         }
 
 
-        const prodResponse = await fetch('api/Products');
+        const prodResponse = await fetch('api/Products').catch(error => {
+            console.log(error);
+        });;
         const prodData = await prodResponse.json();
         this.setState({
             products: prodData, modalOpen: false, editModalOpen: false,productId:0

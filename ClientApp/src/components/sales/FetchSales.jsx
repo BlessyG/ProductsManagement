@@ -93,6 +93,8 @@ export class FetchSales extends Component {
                         return (rec.id != id);
                     })
                 });
+        }).catch(error => {
+            console.log(error);
         });
         this.setState({ deleteOpen: false });
     }
@@ -115,6 +117,8 @@ export class FetchSales extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: req
+            }).catch(error => {
+                console.log(error);
             });
         } else {            
             const data = {
@@ -136,7 +140,9 @@ export class FetchSales extends Component {
                 console.log(error);
             });
         }
-        const salesResponse = await fetch('api/Sales');
+        const salesResponse = await fetch('api/Sales').catch(error => {
+            console.log(error);
+        });
         const salesData = await salesResponse.json();
         this.setState({
             sales: salesData, modalOpen: false, editModalOpen: false, salesId: 0

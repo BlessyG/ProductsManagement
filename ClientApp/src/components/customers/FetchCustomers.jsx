@@ -13,33 +13,37 @@ export class FetchCustomers extends Component {
         this.state = {
             customers: [], loading: true, open: false, name: '', address: '', modalOpen: false, customerId: 0, editModalOpen: false
         };
-        
+
         this.handleConfirm = this.handleConfirm.bind(this);
         this.renderCustomersTable = this.renderCustomersTable.bind(this);
         this.handleCustomerChanges = this.handleCustomerChanges.bind(this);
-        this.renderModal = this.renderModal.bind(this);  
+        this.renderModal = this.renderModal.bind(this);
     }
 
     componentDidMount() {
         this.populateCustomerData();
     }
     async populateCustomerData() {
-        const response = await fetch('api/Customers');
+        const response = await fetch('api/Customers').catch(error => {
+            console.log(error)
+        });
         const data = await response.json();
         this.setState({ customers: data, loading: false });
-    }    
-    
-    async handleConfirm() {        
-        const id = this.state.custId ;      
+    }
+
+    async handleConfirm() {
+        const id = this.state.custId;
         await fetch('api/Customers/' + id, {
             method: 'Delete'
         }).then(customers => {
-                this.setState(
-                    {
-                        customers:this.state.customers.filter((rec) => {
-                            return (rec.id != id);
-                        })
-                    });
+            this.setState(
+                {
+                    customers: this.state.customers.filter((rec) => {
+                        return (rec.id != id);
+                    })
+                });
+        }).catch(error => {
+            console.log(error)
         });
         this.setState({ open: false });
     }
@@ -47,9 +51,9 @@ export class FetchCustomers extends Component {
         console.log("retrieved value" + this.state.name + "Address : " + this.state.address + "Id : " + this.state.customerId);
         const editId = this.state.customerId;
         if (editId > 0) {
-            const data = { id:editId, name: this.state.name, address: this.state.address };
+            const data = { id: editId, name: this.state.name, address: this.state.address };
             const req = JSON.stringify(data);
-            console.log("request : "+req);
+            console.log("request : " + req);
             const response = await fetch('api/Customers/' + editId, {
                 method: 'PUT',
                 headers: {
@@ -69,25 +73,22 @@ export class FetchCustomers extends Component {
                 body: req
             });
         }
-        
+
 
         const custResponse = await fetch('api/Customers');
         const custData = await custResponse.json();
         this.setState({
-            customers: custData, modalOpen: false, editModalOpen: false, customerId:0
+            customers: custData, modalOpen: false, editModalOpen: false, customerId: 0
         });
-             
+
     }
-    handleNameChange = (event) => this.setState({ name: event.target.value })    
-    handleAddressChange = (event) => this.setState({ address: event.target.value })    
-    handleOpen = () => this.setState({ modalOpen: true })  
+    handleNameChange = (event) => this.setState({ name: event.target.value })
+    handleAddressChange = (event) => this.setState({ address: event.target.value })
+    handleOpen = () => this.setState({ modalOpen: true })
     editHandleOpen = () => this.setState({ editModalOpen: true })
-    handleClose = () =>  this.setState({ modalOpen: false, open: false, editModalOpen: false }) 
+    handleClose = () => this.setState({ modalOpen: false, open: false, editModalOpen: false })
     show = (id) => this.setState({ open: true, custId: id })
     updateCustomer = (id, editName, cAddress) => this.setState({ name: editName, customerId: id, address: cAddress, editModalOpen: true })
-    
-    
-    
 
     renderModal() {
         return (
@@ -110,18 +111,18 @@ export class FetchCustomers extends Component {
                             cancel
                             </Button>
                         <Button color="teal" onClick={this.handleCustomerChanges}>
-                            create<Icon name='check'/>
+                            create<Icon name='check' />
                         </Button>
                     </Modal.Actions>
                 </Modal>
             </div>
-            
-            );
+
+        );
     }
 
     renderCustomersTable(customers) {
         return (
-            <div>                
+            <div>
                 <div>
                     <table className="ui striped table" >
                         <thead>
@@ -139,35 +140,35 @@ export class FetchCustomers extends Component {
                                     <td>{customerList.address}</td>
                                     <td>
                                         <Modal trigger={<Button color='yellow' ><Icon name='edit' onClick={this.editHandleOpen} />Edit</Button>} open={this.state.editModalOpen} onOpen={() => this.updateCustomer(customerList.id, customerList.name, customerList.address)}>
-                                        
-                                        <Modal.Header>Edit Customer</Modal.Header>
-                                        <Modal.Content>
 
-                                            Name<br /><br />
-                                            <div className="ui input fluid">
-                                                <input type="text" name="name" value={this.state.name} onChange={this.handleNameChange} />
-                                            </div>
-                                            <br />    Address<br /><br />
-                                            <div className="ui input fluid">
-                                                <input type="text" name="address" value={this.state.address} onChange={this.handleAddressChange} />
-                                            </div>
-                                        </Modal.Content>
-                                        <Modal.Actions>
+                                            <Modal.Header>Edit Customer</Modal.Header>
+                                            <Modal.Content>
+
+                                                Name<br /><br />
+                                                <div className="ui input fluid">
+                                                    <input type="text" name="name" value={this.state.name} onChange={this.handleNameChange} />
+                                                </div>
+                                                <br />    Address<br /><br />
+                                                <div className="ui input fluid">
+                                                    <input type="text" name="address" value={this.state.address} onChange={this.handleAddressChange} />
+                                                </div>
+                                            </Modal.Content>
+                                            <Modal.Actions>
                                                 <Button color="black" onClick={this.handleClose}>
-                                                cancel
+                                                    cancel
                             </Button>
-                                            <Button color="teal" onClick={this.handleCustomerChanges}>
-                                                update<Icon name='check' />
-                                            </Button>
-                                        </Modal.Actions>
-                </Modal>
+                                                <Button color="teal" onClick={this.handleCustomerChanges}>
+                                                    update<Icon name='check' />
+                                                </Button>
+                                            </Modal.Actions>
+                                        </Modal>
                                     </td>
                                     <td><Button color='red' onClick={() => this.show(customerList.id)}><Icon name='trash' />Delete</Button>
-                                    <Confirm
-                                        open={this.state.open}
-                                        header='Delete customer'
-                                        onCancel={this.handleClose}
-                                        onConfirm={this.handleConfirm}                                        
+                                        <Confirm
+                                            open={this.state.open}
+                                            header='Delete customer'
+                                            onCancel={this.handleClose}
+                                            onConfirm={this.handleConfirm}
                                         /></td>
                                 </tr>
                             )}
